@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Play Chess</title>
+
+  <!-- Chessboard.js -->
+  <link rel="stylesheet" href="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"/>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0f1220;
+      --panel: #161a2f;
+      --accent: #4f7cff;
+      --text: #eaeaf0;
+      --muted: #9aa0c3;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 800px at 50% -200px, #1b2150, var(--bg));
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ----------- LANDING ----------- */
+    .landing {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .btn {
+      width: 240px;
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--panel);
+      color: var(--text);
+      transition: 0.2s;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), #7aa2ff);
+      color: #fff;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+
+    /* ----------- GAME ----------- */
+    .game {
+      display: none;
+      width: 100%;
+      max-width: 1100px;
+      padding: 20px;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar {
+      background: var(--panel);
+      padding: 20px;
+      border-radius: 16px;
+      min-width: 140px;
+      text-align: center;
+    }
+
+    .timer-label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .timer {
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    #board {
+      width: 420px;
+      max-width: 90vw;
+    }
+
+    /* ----------- MOBILE ----------- */
+    @media (max-width: 768px) {
+      .game {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        max-width: 420px;
+      }
+
+      #board {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LANDING -->
+  <div class="landing" id="landing">
+    <button class="btn primary" id="joinQueue">Sıraya Katıl</button>
+    <button class="btn" id="aboutBtn">Yapımcı Hakkında</button>
+  </div>
+
+  <!-- GAME -->
+  <div class="game" id="game">
+    <!-- PC: Sol | Mobile: Üst -->
+    <div class="sidebar">
+      <div class="timer-label">Rakip</div>
+      <div class="timer" id="opponentTime">05:00</div>
+    </div>
+
+    <div id="board"></div>
+
+    <!-- PC: Sol yok | Mobile: Alt -->
+    <div class="sidebar">
+      <div class="timer-label">Sen</div>
+      <div class="timer" id="myTime">05:00</div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/chess.js@1.0.0/chess.min.js"></script>
+  <script src="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+
+  <script>
+    /* ----------- ANON ID ----------- */
+    let userId = localStorage.getItem("anon_id");
+    if (!userId) {
+      userId = crypto.randomUUID();
+      localStorage.setItem("anon_id", userId);
+    }
+
+    /* ----------- UI FLOW ----------- */
+    const landing = document.getElementById("landing");
+    const game = document.getElementById("game");
+
+    document.getElementById("joinQueue").onclick = () => {
+      landing.style.display = "none";
+      game.style.display = "flex";
+      initBoard();
+    };
+
+    document.getElementById("aboutBtn").onclick = () => {
+      alert("Play Chess\nMinimal, hızlı ve anonim satranç deneyimi.");
+    };
+
+    /* ----------- CHESS ----------- */
+    let board = null;
+    const gameLogic = new Chess();
+
+    function initBoard() {
+      board = Chessboard("board", {
+        draggable: true,
+        position: "start",
+        pieceTheme:
+          "https://lichess1.org/assets/piece/cburnett/{piece}.svg",
+        onDrop: onDrop
+      });
+    }
+
+    function onDrop(source, target) {
+      const move = gameLogic.move({
+        from: source,
+        to: target,
+        promotion: "q"
+      });
+
+      if (move === null) return "snapback";
+    }
+  </script>
+
+</body>
+</html>
