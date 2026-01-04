@@ -107,6 +107,9 @@
     #board {
       width: 420px;
       max-width: 90vw;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px var(--shadow);
     }
 
     /* -------- MOBILE -------- */
@@ -169,8 +172,6 @@
     document.getElementById("joinQueue").onclick = () => {
       landing.style.display = "none";
       gameDiv.style.display = "flex";
-
-      // Tahtayı render sonrası başlat
       requestAnimationFrame(initBoard);
     };
 
@@ -178,22 +179,21 @@
       alert("Play Chess\nAnonim, hızlı ve sade satranç.");
     };
 
-    // Satranç kurulumu
     let board;
     const game = new Chess();
 
-function initBoard() {
-  board = Chessboard("board", {
-    draggable: true,
-    position: "start",
-    pieceTheme: 'https://raw.githubusercontent.com/oakmac/chessboardjs/master/www/img/chesspieces/wikipedia/{piece}.png',
-    onDrop: onDrop
-  });
+    function initBoard() {
+      board = Chessboard("board", {
+        draggable: true,
+        position: "start",
+        pieceTheme: 'img/chesspieces/lichess/{piece}.png', // ✅ STANDART İSİMLER
+        onDrop: onDrop
+      });
 
-  window.addEventListener("resize", () => {
-    if (board) board.resize();
-  });
-}
+      window.addEventListener("resize", () => {
+        if (board) board.resize();
+      });
+    }
 
     function onDrop(source, target) {
       const move = game.move({
