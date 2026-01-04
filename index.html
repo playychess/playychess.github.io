@@ -35,7 +35,7 @@
       justify-content: center;
     }
 
-    /* ----------- LANDING ----------- */
+    /* -------- LANDING -------- */
     .landing {
       display: flex;
       flex-direction: column;
@@ -66,7 +66,7 @@
       filter: brightness(1.05);
     }
 
-    /* ----------- GAME ----------- */
+    /* -------- GAME -------- */
     .game {
       display: none;
       width: 100%;
@@ -79,7 +79,7 @@
 
     .sidebar {
       background: var(--panel);
-      padding: 20px;
+      padding: 18px 22px;
       border-radius: 16px;
       min-width: 140px;
       text-align: center;
@@ -93,7 +93,7 @@
     .timer {
       font-size: 28px;
       font-weight: 700;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     #board {
@@ -101,7 +101,7 @@
       max-width: 90vw;
     }
 
-    /* ----------- MOBILE ----------- */
+    /* -------- MOBILE -------- */
     @media (max-width: 768px) {
       .game {
         flex-direction: column;
@@ -128,7 +128,6 @@
 
   <!-- GAME -->
   <div class="game" id="game">
-    <!-- PC: Sol | Mobile: Üst -->
     <div class="sidebar">
       <div class="timer-label">Rakip</div>
       <div class="timer" id="opponentTime">05:00</div>
@@ -136,7 +135,6 @@
 
     <div id="board"></div>
 
-    <!-- PC: Sol yok | Mobile: Alt -->
     <div class="sidebar">
       <div class="timer-label">Sen</div>
       <div class="timer" id="myTime">05:00</div>
@@ -148,43 +146,45 @@
   <script src="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
 
   <script>
-    /* ----------- ANON ID ----------- */
+    /* -------- ANON USER ID -------- */
     let userId = localStorage.getItem("anon_id");
     if (!userId) {
       userId = crypto.randomUUID();
       localStorage.setItem("anon_id", userId);
     }
 
-    /* ----------- UI FLOW ----------- */
     const landing = document.getElementById("landing");
-    const game = document.getElementById("game");
+    const gameDiv = document.getElementById("game");
 
     document.getElementById("joinQueue").onclick = () => {
       landing.style.display = "none";
-      game.style.display = "flex";
-      initBoard();
+      gameDiv.style.display = "flex";
+
+      // ⚠️ Kritik: DOM render sonrası başlat
+      setTimeout(initBoard, 50);
     };
 
     document.getElementById("aboutBtn").onclick = () => {
-      alert("Play Chess\nMinimal, hızlı ve anonim satranç deneyimi.");
+      alert("Play Chess\nAnonim, hızlı ve sade satranç.");
     };
 
-    /* ----------- CHESS ----------- */
-    let board = null;
-    const gameLogic = new Chess();
+    /* -------- CHESS -------- */
+    let board;
+    const game = new Chess();
 
     function initBoard() {
       board = Chessboard("board", {
         draggable: true,
         position: "start",
-        pieceTheme:
-          "https://lichess1.org/assets/piece/cburnett/{piece}.svg",
+        pieceTheme: "https://lichess1.org/assets/piece/cburnett/{piece}.svg",
         onDrop: onDrop
       });
+
+      window.addEventListener("resize", () => board.resize());
     }
 
     function onDrop(source, target) {
-      const move = gameLogic.move({
+      const move = game.move({
         from: source,
         to: target,
         promotion: "q"
