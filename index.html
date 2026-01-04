@@ -186,8 +186,13 @@
       board = Chessboard("board", {
         draggable: true,
         position: "start",
-        pieceTheme: "https://lichess1.org/assets/piece/cburnett/{piece}.svg",
+        pieceTheme: "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png", // ✅ DOĞRU URL
         onDrop: onDrop
+      });
+
+      // Ekstra: Pencere boyutu değiştiğinde tahtayı yeniden ölçeklendir
+      window.addEventListener("resize", () => {
+        if (board) board.resize();
       });
     }
 
